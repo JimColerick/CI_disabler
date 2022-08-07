@@ -35,20 +35,17 @@ fn main() -> Result<(), Box <dyn Error>> {
         println!("Reenabling signing");
         gb_driver.write_bytes(ci_base + G_CIOPTIONS_OFFSET, &[0x16, 0, 0, 0u8]);
 
-        let bytes = gb_driver.write_phys_mem(physical_address, &[0x74, 0x6b]);
+        gb_driver.write_phys_mem(physical_address, &[0x74, 0x6b]);
     }
     else {
         println!("Disabling signing");
         gb_driver.write_bytes(ci_base + G_CIOPTIONS_OFFSET, &[0x0, 0, 0, 0u8]);
 
-        let bytes = gb_driver.write_phys_mem(physical_address, &[0x90, 0x90]);
+        gb_driver.write_phys_mem(physical_address, &[0x90, 0x90]);
     }
 
     println!("g_ci_options -> {:#x}", g_ci_options);
 
-
-    println!("bytes -> {:#x?}", bytes);
-    
 
     Ok(())
 }
